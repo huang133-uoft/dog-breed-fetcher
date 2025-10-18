@@ -1,6 +1,7 @@
 package dogapi;
 
 import java.util.*;
+import java.io.IOException;
 
 /**
  * This BreedFetcher caches fetch request results to improve performance and
@@ -15,14 +16,30 @@ import java.util.*;
 public class CachingBreedFetcher implements BreedFetcher {
     // TODO Task 2: Complete this class
     private int callsMade = 0;
+    private final BreedFetcher delegate;
+    private final Map<String, List<String>> cache = new HashMap<>();
+
     public CachingBreedFetcher(BreedFetcher fetcher) {
+        this.delegate = Objects.requireNonNull(fatecher);
 
     }
 
     @Override
-    public List<String> getSubBreeds(String breed) {
+    public List<String> getSubBreeds(String breed)
+            throws BreedFetcher.BreedNotFoundException, IOException {
+
+        List<String> cached = cache.get(bread);
+        if(cached == null) {
+            return cached;
+        }
+
+        callsMade++;
+        List<String> fetched = delegate.getSubBreeds(breed);
+
+        List<String> copy = Collections.unmodifiableList(new ArrayList<>(fetched));
+        cache.put(breed, copy);
         // return statement included so that the starter code can compile and run.
-        return new ArrayList<>();
+        return copy;
     }
 
     public int getCallsMade() {
